@@ -16,22 +16,7 @@ CHIP Mux4Way {
     OUT out;
 
     PARTS:
-    Or(a=sel[0], b=sel[1], out=selOr);
-    Not(in=selOr, out=useA);
-
-    Not(in=sel[1], out=notSel1);
-    And(a=selOr, b=notSel1, out=useB);
-
-    Not(in=sel[0], out=notSel0);
-    And(a=selOr, b=notSel0, out=useC);
-
-    And(a=sel[0], b=sel[1], out=useD);
-
-    And(a=useA, b=a, out=outA);
-    And(a=useB, b=b, out=outB);
-    And(a=useC, b=c, out=outC);
-    And(a=useD, b=d, out=outD);
-    Or(a=outA, b=outB, out=outAOrB);
-    Or(a=outC, b=outD, out=outCOrD);
-    Or(a=outAOrB, b=outCOrD, out=out);
+    Mux(a=a, b=b, sel=sel[0], out=out1);
+    Mux(a=c, b=d, sel=sel[0], out=out2);
+    Mux(a=out1, b=out2, sel=sel[1], out=out);
 }
