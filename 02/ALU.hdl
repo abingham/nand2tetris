@@ -57,8 +57,14 @@ CHIP ALU {
         And16(a=FinalX, b=FinalY, out=XAndY);
         Mux16(a=XAndY, b=XPlusY, sel=f, out=XWithY);
         Not16(in=XWithY, out=InvertedXWithY);
-        Mux16(a=XWithY, b=InvertedXWithY, sel=no, out[0..7]=OutLow, out[8..15]=OutHigh, out[15]=ng, out=out);
 
+        // Output X-Y combination, and remember some subsets of the output
+        // Remember that a the high bit in the output determines if the number
+        // is negative, hence the wiring to `ng`.
+        Mux16(a=XWithY, b=InvertedXWithY, sel=no,
+              out[0..7]=OutLow, out[8..15]=OutHigh, out[15]=ng, out=out);
+
+        // Set `zr` appropriately based on whether the output is zero.
         Or8Way(in=OutLow, out=OutLowBit);
         Or8Way(in=OutHigh, out=OutHighBit);
         Or(a=OutLowBit, b=OutHighBit, out=OutBit);
