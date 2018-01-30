@@ -35,7 +35,7 @@ class AInstruction:
             raise ValueError(
                 'Can not generate code from unresolevd a-instruction.')
 
-        return '0{:015b}'.format(int(self.value))
+        return ['0{:015b}'.format(int(self.value))]
 
     def __eq__(self, rhs):
         return self.value == rhs.value
@@ -68,7 +68,7 @@ class CInstruction:
         return self._jump
 
     def generate(self):
-        return '111{comp}{dest}{jump}'.format(**self._codes)
+        return ['111{comp}{dest}{jump}'.format(**self._codes)]
 
     def __eq__(self, rhs):
         return (self.destination == rhs.destination
@@ -103,7 +103,7 @@ class LInstruction:
         return self._label
 
     def generate(self):
-        return ''
+        return []
 
     def __eq__(self, rhs):
         return self.label == rhs.label

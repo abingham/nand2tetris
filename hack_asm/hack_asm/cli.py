@@ -13,9 +13,7 @@ import sys
 
 import docopt
 
-from hack_asm import loading
-from hack_asm.resolution import resolve_labels, resolve_symbols
-from hack_asm.symbol_table import create_default_symbol_table
+from hack_asm.generation import generate_microcode
 
 
 def main(args):
@@ -26,21 +24,9 @@ def main(args):
     if hack_file is None:
         hack_file = 'out.hack'
 
-    syms = resolve_labels(
-        loading.from_file(asm_file),
-        create_default_symbol_table())
-
-    resolved = resolve_symbols(
-        loading.from_file(asm_file),
-        syms)
-
-    microcode = filter(
-        None,
-        (instruction.generate()
-         for instruction
-         in resolved))
-
-    with open(hack_file, mode='wt') as outfile:
+    with open(asm_file, mode='rt') as infile,\
+         open(hack_file, mode='wt') as outfile:
+        microcode = generate_microcode(infile)
         outfile.write('\n'.join(microcode))
         outfile.write('\n')
 
