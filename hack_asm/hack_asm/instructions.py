@@ -1,5 +1,4 @@
 import re
-import string
 
 from hack_asm import mnemonics
 

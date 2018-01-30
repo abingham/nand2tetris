@@ -13,22 +13,26 @@ import sys
 
 import docopt
 
-from hack_asm.lex import load_instructions_from_file
-from hack_asm.symbol_table import create_default_symbol_table, process_labels, resolve_symbols
+from hack_asm import loading
+from hack_asm.resolution import resolve_labels, resolve_symbols
+from hack_asm.symbol_table import create_default_symbol_table
 
 
 def main(args):
     args = docopt.docopt(__doc__, argv=args, version='hack-asm 0.1')
     asm_file = args['<asm-file>']
     hack_file = args['-o']
+
     if hack_file is None:
         hack_file = 'out.hack'
 
-    syms = process_labels(
-        load_instructions_from_file(asm_file),
+    syms = resolve_labels(
+        loading.from_file(asm_file),
         create_default_symbol_table())
 
-    resolved = resolve_symbols(load_instructions_from_file(asm_file), syms)
+    resolved = resolve_symbols(
+        loading.from_file(asm_file),
+        syms)
 
     microcode = filter(
         None,
