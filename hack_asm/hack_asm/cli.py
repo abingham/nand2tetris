@@ -13,8 +13,8 @@ import sys
 
 import docopt
 
-from hack_asm.lex import load_commands_from_file
-from hack_asm.microcode import command_to_microcode
+from hack_asm.lex import load_instructions_from_file
+from hack_asm.symbol_table import create_default_symbol_table, process_labels, resolve_symbols
 
 
 def main(args):
@@ -24,11 +24,21 @@ def main(args):
     if hack_file is None:
         hack_file = 'out.hack'
 
+    syms = process_labels(
+        load_instructions_from_file(asm_file),
+        create_default_symbol_table())
+
+    resolved = resolve_symbols(load_instructions_from_file(asm_file), syms)
+
+    microcode = filter(
+        None,
+        (instruction.generate()
+         for instruction
+         in resolved))
+
     with open(hack_file, mode='wt') as outfile:
-        for cmd in load_commands_from_file(asm_file):
-            mc = command_to_microcode(cmd)
-            outfile.write(mc)
-            outfile.write('\n')
+        outfile.write('\n'.join(microcode))
+        outfile.write('\n')
 
 
 if __name__ == '__main__':
